@@ -28,7 +28,7 @@ const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
       const options = {
         target: `#${graphId}`,
         width: graphRef.current.clientWidth,
-        height: 500,
+        height: graphRef.current.clientHeight,
         xAxis: {
           domain: [coordinateRange.xMin, coordinateRange.xMax]
         },
@@ -52,7 +52,7 @@ const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
         const options = {
           target: `#${graphId}`,
           width: graphRef.current.clientWidth,
-          height: 500,
+          height: graphRef.current.clientHeight,
           xAxis: {
             domain: [coordinateRange.xMin, coordinateRange.xMax]
           },
