@@ -7,29 +7,34 @@ interface KeyboardShortcutsHelpProps {
 
 const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({ onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
-      <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 animate-slide-up">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">键盘快捷键</h2>
+    <div className="fixed inset-0 bg-dark-900/90 backdrop-blur-md flex items-center justify-center z-50 animate-fade-in">
+      <div className="bg-dark-800 border border-dark-500 rounded-sm shadow-glow p-6 max-w-md w-full mx-4 animate-slide-up">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="font-display text-lg tracking-wider text-neon-blue">SHORTCUTS</h2>
+            <p className="text-xs font-mono text-gray-500 mt-1">KEYBOARD COMMANDS</p>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+            className="text-gray-500 hover:text-neon-pink transition-colors duration-200 text-xl"
             aria-label="关闭"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            ×
           </button>
         </div>
-        <div className="space-y-3">
+        
+        <div className="space-y-2">
           {SHORTCUTS.map((shortcut, index) => (
-            <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-              <span className="text-gray-700">{shortcut.description}</span>
+            <div 
+              key={index} 
+              className="flex items-center justify-between py-2.5 px-3 bg-dark-700/50 border border-dark-500/30 rounded-sm hover:border-neon-blue/20 transition-colors"
+            >
+              <span className="text-sm text-gray-300">{shortcut.description}</span>
               <div className="flex gap-1">
                 {shortcut.keys.map((key, keyIndex) => (
                   <kbd
                     key={keyIndex}
-                    className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-sm font-mono text-gray-700"
+                    className="px-2 py-1 text-xs font-mono bg-dark-900 text-neon-blue border border-dark-500 rounded-sm"
                   >
                     {key}
                   </kbd>
@@ -38,12 +43,13 @@ const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({ onClose }
             </div>
           ))}
         </div>
-        <div className="mt-6 text-center">
+        
+        <div className="mt-6 pt-4 border-t border-dark-500/50">
           <button
             onClick={onClose}
-            className="btn-primary"
+            className="w-full btn-primary text-xs"
           >
-            知道了
+            GOT IT
           </button>
         </div>
       </div>

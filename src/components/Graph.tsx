@@ -49,7 +49,7 @@ const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
         );
         functionPlot(options);
       } catch (err) {
-        setError('函数图像渲染失败，请检查函数表达式');
+        setError('Rendering failed. Check your expression.');
       } finally {
         setIsLoading(false);
       }
@@ -123,65 +123,102 @@ const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
   }, [renderGraph]);
 
   return (
-    <div className={`relative ${isFullscreen ? 'bg-white p-4' : ''}`}>
+    <div className={`relative ${isFullscreen ? 'bg-dark-900 p-4' : ''}`}>
+      {/* Loading Overlay */}
       {isLoading && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
-          <div className="flex items-center text-sm text-blue-600">
-            <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <div className="absolute inset-0 bg-dark-900/80 backdrop-blur-sm flex items-center justify-center z-10">
+          <div className="flex items-center gap-3 px-4 py-2 bg-dark-800 border border-neon-blue/30 rounded-sm">
+            <svg className="animate-spin h-4 w-4 text-neon-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            渲染中...
+            <span className="text-xs font-mono text-neon-blue">RENDERING...</span>
           </div>
         </div>
       )}
+      
+      {/* Error Overlay */}
       {error && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
-          <div className="text-center p-4">
-            <p className="text-red-600 mb-2">{error}</p>
+        <div className="absolute inset-0 bg-dark-900/80 backdrop-blur-sm flex items-center justify-center z-10">
+          <div className="text-center p-6 bg-dark-800 border border-neon-pink/30 rounded-sm">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-sm bg-neon-pink/10 border border-neon-pink/30 flex items-center justify-center">
+              <span className="text-2xl">⚠</span>
+            </div>
+            <p className="text-sm font-mono text-neon-pink mb-4">{error.toUpperCase()}</p>
             <button
               onClick={renderGraph}
-              className="btn-primary text-sm"
+              className="btn-primary text-xs"
             >
-              重试
+              RETRY
             </button>
           </div>
         </div>
       )}
-      <div className="flex justify-between items-center gap-2 mb-2">
+      
+      {/* Toolbar */}
+      <div className="flex justify-between items-center gap-2 mb-3">
         <div className="flex gap-1">
           <button
             onClick={toggleFullscreen}
-            className="btn-secondary text-xs px-2 py-1"
-            title={isFullscreen ? '退出全屏' : '全屏显示'}
+            className="px-2 py-1 text-xs font-mono bg-dark-700 text-gray-400 hover:text-neon-blue hover:bg-dark-600 border border-dark-500 hover:border-neon-blue/30 rounded-sm transition-all duration-200"
+            title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
           >
             {isFullscreen ? '⊡' : '⊞'}
           </button>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           <button
             onClick={exportAsPNG}
-            className="btn-secondary text-sm"
+            className="btn-secondary text-xs py-1"
             disabled={isLoading || !!error}
           >
-            导出 PNG
+            PNG
           </button>
           <button
             onClick={exportAsSVG}
-            className="btn-secondary text-sm"
+            className="btn-secondary text-xs py-1"
             disabled={isLoading || !!error}
           >
-            导出 SVG
+            SVG
           </button>
         </div>
       </div>
+      
+      {/* Graph Container */}
       <div
         id={graphId}
         ref={graphRef}
-        className={`w-full border border-gray-200 rounded-md ${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-96'}`}
+        className={`w-full border border-dark-500/50 rounded-sm bg-dark-900 ${isFullscreen ? 'h-[calc(100vh-160px)]' : 'h-[500px]'}`}
         role="img"
         aria-label="函数图像显示区域"
       />
+      
+      {/* Graph Footer */}
+      <div className="mt-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {functions.length > 0 && (
+            <div className="flex items-center gap-1.5">
+              {functions.slice(0, 5).map((func) => (
+                <div key={func.id} className="flex items-center gap-1">
+                  <span
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: func.color }}
+                  />
+                  <span className="text-xs font-mono text-gray-500">
+                    {func.expression.length > 8 ? func.expression.substring(0, 8) + '...' : func.expression}
+                  </span>
+                </div>
+              ))}
+              {functions.length > 5 && (
+                <span className="text-xs font-mono text-gray-600">+{functions.length - 5}</span>
+              )}
+            </div>
+          )}
+        </div>
+        <span className="text-xs font-mono text-gray-600">
+          {functions.length} FUNCTION{functions.length !== 1 ? 'S' : ''}
+        </span>
+      </div>
     </div>
   );
 };

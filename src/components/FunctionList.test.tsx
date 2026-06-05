@@ -16,8 +16,8 @@ describe('FunctionList', () => {
       <FunctionList functions={[]} onRemoveFunction={mockOnRemoveFunction} />
     );
 
-    expect(screen.getByText('暂无函数，请添加函数表达式')).toBeInTheDocument();
-    expect(screen.getByText('支持数学表达式如 sin(x)、x^2 等')).toBeInTheDocument();
+    expect(screen.getByText('NO FUNCTIONS')).toBeInTheDocument();
+    expect(screen.getByText('Add an expression above')).toBeInTheDocument();
   });
 
   it('should render function list', () => {

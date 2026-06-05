@@ -16,18 +16,18 @@ const Controls: React.FC<ControlsProps> = React.memo(({ coordinateRange, onUpdat
   );
 
   const inputs = useMemo(() => [
-    { id: 'xMin', label: 'X 最小值', value: coordinateRange.xMin },
-    { id: 'xMax', label: 'X 最大值', value: coordinateRange.xMax },
-    { id: 'yMin', label: 'Y 最小值', value: coordinateRange.yMin },
-    { id: 'yMax', label: 'Y 最大值', value: coordinateRange.yMax },
+    { id: 'xMin', label: 'X MIN', value: coordinateRange.xMin, color: 'neon-blue' },
+    { id: 'xMax', label: 'X MAX', value: coordinateRange.xMax, color: 'neon-blue' },
+    { id: 'yMin', label: 'Y MIN', value: coordinateRange.yMin, color: 'neon-purple' },
+    { id: 'yMax', label: 'Y MAX', value: coordinateRange.yMax, color: 'neon-purple' },
   ], [coordinateRange]);
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2">
         {inputs.slice(0, 2).map(({ id, label, value }) => (
           <div key={id}>
-            <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor={id} className="block text-xs font-mono text-gray-500 tracking-wider mb-1.5">
               {label}
             </label>
             <input
@@ -36,16 +36,16 @@ const Controls: React.FC<ControlsProps> = React.memo(({ coordinateRange, onUpdat
               name={id}
               value={value}
               onChange={handleInputChange}
-              className="input-field"
+              className="input-field text-xs py-2"
               aria-label={`${label}轴`}
             />
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2">
         {inputs.slice(2).map(({ id, label, value }) => (
           <div key={id}>
-            <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor={id} className="block text-xs font-mono text-gray-500 tracking-wider mb-1.5">
               {label}
             </label>
             <input
@@ -54,11 +54,17 @@ const Controls: React.FC<ControlsProps> = React.memo(({ coordinateRange, onUpdat
               name={id}
               value={value}
               onChange={handleInputChange}
-              className="input-field"
+              className="input-field text-xs py-2"
               aria-label={`${label}轴`}
             />
           </div>
         ))}
+      </div>
+      <div className="pt-2 border-t border-dark-500/50">
+        <div className="flex items-center justify-between text-xs font-mono text-gray-600">
+          <span>RANGE</span>
+          <span className="text-neon-blue">[{coordinateRange.xMin}, {coordinateRange.xMax}]</span>
+        </div>
       </div>
     </div>
   );

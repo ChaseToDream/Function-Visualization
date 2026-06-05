@@ -101,10 +101,10 @@ const FunctionInput: React.FC<FunctionInputProps> = ({ onAddFunction }) => {
   }, [showSymbols, showPresets]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div>
-        <label htmlFor="function" className="block text-sm font-medium text-gray-700 mb-1">
-          函数表达式
+        <label htmlFor="function" className="block text-xs font-mono text-neon-blue tracking-wider uppercase mb-2">
+          EXPRESSION
         </label>
         <div className="relative">
           <input
@@ -113,10 +113,10 @@ const FunctionInput: React.FC<FunctionInputProps> = ({ onAddFunction }) => {
             id="function"
             value={expression}
             onChange={(e) => setExpression(e.target.value)}
-            placeholder="例如: sin(x) 或 x^2"
-            className={`input-field ${
-              isValid === false ? 'border-red-500' : 
-              isValid === true ? 'border-green-500' : ''
+            placeholder="e.g. sin(x) or x^2"
+            className={`input-field pr-24 ${
+              isValid === false ? 'border-neon-pink focus:border-neon-pink focus:shadow-neon-pink' : 
+              isValid === true ? 'border-neon-green focus:border-neon-green focus:shadow-neon-green' : ''
             }`}
             aria-label="输入函数表达式"
             aria-invalid={isValid === false}
@@ -126,57 +126,67 @@ const FunctionInput: React.FC<FunctionInputProps> = ({ onAddFunction }) => {
             <button
               type="button"
               onClick={togglePresets}
-              className="bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded text-sm transition-colors duration-200"
+              className="px-2 py-1 text-xs font-mono bg-dark-700 text-gray-400 hover:text-neon-blue hover:bg-dark-600 border border-dark-500 hover:border-neon-blue/30 rounded-sm transition-all duration-200"
               aria-label="选择预设函数"
             >
-              预设
+              PRESETS
             </button>
             <button
               type="button"
               onClick={toggleSymbols}
-              className="bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded text-sm transition-colors duration-200"
+              className="px-2 py-1 text-xs font-mono bg-dark-700 text-gray-400 hover:text-neon-purple hover:bg-dark-600 border border-dark-500 hover:border-neon-purple/30 rounded-sm transition-all duration-200"
               aria-label="插入数学符号"
             >
-              符号
+              SYMBOLS
             </button>
           </div>
         </div>
-        {errorMessage && (
-          <p id="validation-error" className="mt-1 text-sm text-red-600 animate-fade-in" role="alert">
-            {errorMessage}
-          </p>
-        )}
-        {!checkBracketBalance && (
-          <p className="mt-1 text-sm text-amber-600 animate-fade-in" role="alert">
-            括号不匹配，请检查
-          </p>
-        )}
+        
+        {/* Validation Status */}
+        <div className="mt-2 h-5">
+          {isValid === true && (
+            <p className="text-xs font-mono text-neon-green flex items-center gap-1 animate-fade-in">
+              <span>✓</span> VALID EXPRESSION
+            </p>
+          )}
+          {isValid === false && (
+            <p id="validation-error" className="text-xs font-mono text-neon-pink flex items-center gap-1 animate-fade-in" role="alert">
+              <span>✕</span> {errorMessage?.toUpperCase() || 'INVALID EXPRESSION'}
+            </p>
+          )}
+          {!checkBracketBalance && (
+            <p className="text-xs font-mono text-neon-yellow flex items-center gap-1 animate-fade-in" role="alert">
+              <span>⚠</span> BRACKETS MISMATCH
+            </p>
+          )}
+        </div>
       </div>
 
+      {/* Symbols Panel */}
       {showSymbols && (
-        <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg p-4 w-80 max-h-96 overflow-y-auto mt-1 animate-slide-up">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-medium">选择数学符号</h3>
+        <div className="absolute z-10 left-0 right-0 bg-dark-800 border border-dark-500 rounded-sm shadow-glow p-4 max-h-80 overflow-y-auto animate-slide-up">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-xs font-display tracking-wider text-neon-purple uppercase">SYMBOLS</h3>
             <button
               type="button"
               onClick={toggleSymbols}
-              className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+              className="text-gray-500 hover:text-neon-pink transition-colors duration-200 text-lg"
               aria-label="关闭符号面板"
             >
               ×
             </button>
           </div>
           {categories.map((category) => (
-            <div key={category} className="mb-3">
-              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">{category}</h4>
-              <div className="flex flex-wrap gap-1">
+            <div key={category} className="mb-4">
+              <h4 className="text-xs font-mono text-gray-500 uppercase mb-2 tracking-wider">{category}</h4>
+              <div className="flex flex-wrap gap-1.5">
                 {MATH_SYMBOLS.filter((symbol) => symbol.category === category).map(
                   (symbol, index) => (
                     <button
                       key={index}
                       type="button"
                       onClick={() => insertSymbol(symbol.value)}
-                      className="px-2 py-1 text-sm border border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
+                      className="px-2.5 py-1.5 text-xs font-mono bg-dark-700 text-gray-300 border border-dark-500 hover:border-neon-blue/50 hover:text-neon-blue hover:bg-dark-600 rounded-sm transition-all duration-200"
                       aria-label={`插入 ${symbol.label}`}
                     >
                       {symbol.label}
@@ -189,50 +199,53 @@ const FunctionInput: React.FC<FunctionInputProps> = ({ onAddFunction }) => {
         </div>
       )}
 
+      {/* Presets Panel */}
       {showPresets && (
-        <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg p-4 w-80 max-h-96 overflow-y-auto mt-1 animate-slide-up">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-medium">预设函数</h3>
+        <div className="absolute z-10 left-0 right-0 bg-dark-800 border border-dark-500 rounded-sm shadow-glow p-4 max-h-80 overflow-y-auto animate-slide-up">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-xs font-display tracking-wider text-neon-green uppercase">PRESETS</h3>
             <button
               type="button"
               onClick={togglePresets}
-              className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+              className="text-gray-500 hover:text-neon-pink transition-colors duration-200 text-lg"
               aria-label="关闭预设面板"
             >
               ×
             </button>
           </div>
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
             {FUNCTION_PRESETS.map((preset, index) => (
               <button
                 key={index}
                 type="button"
                 onClick={() => selectPreset(preset.expression)}
-                className="w-full text-left p-2 border border-gray-200 rounded hover:bg-gray-50 transition-colors duration-200"
+                className="text-left p-3 bg-dark-700 border border-dark-500 hover:border-neon-green/50 hover:bg-dark-600 rounded-sm transition-all duration-200 group"
                 aria-label={`选择预设函数 ${preset.name}`}
               >
-                <div className="font-medium text-sm">{preset.name}</div>
-                <div className="text-xs text-gray-500">{preset.expression}</div>
-                <div className="text-xs text-gray-400">{preset.description}</div>
+                <div className="font-body text-sm text-gray-200 group-hover:text-neon-green transition-colors">{preset.name}</div>
+                <div className="font-mono text-xs text-neon-blue mt-1">{preset.expression}</div>
+                <div className="text-xs text-gray-500 mt-0.5">{preset.description}</div>
               </button>
             ))}
           </div>
         </div>
       )}
 
+      {/* Action Buttons */}
       <div className="flex gap-2">
         <button
           type="button"
           onClick={formatExpression}
-          className="flex-1 btn-secondary"
+          className="flex-1 btn-secondary text-xs"
         >
-          格式化
+          FORMAT
         </button>
         <button
           type="submit"
-          className="flex-1 btn-primary"
+          className="flex-1 btn-primary text-xs"
+          disabled={!isValid}
         >
-          添加函数
+          ADD FUNCTION
         </button>
       </div>
     </form>
