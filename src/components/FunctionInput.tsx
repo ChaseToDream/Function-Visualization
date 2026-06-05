@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
-import { validateFunction } from '../utils/math';
+import { useValidation } from '../hooks/useValidation';
 import { MATH_SYMBOLS, FUNCTION_PRESETS } from '../config';
 
 interface FunctionInputProps {
@@ -8,10 +8,10 @@ interface FunctionInputProps {
 
 const FunctionInput: React.FC<FunctionInputProps> = ({ onAddFunction }) => {
   const [expression, setExpression] = useState('');
-  const [error, setError] = useState('');
   const [showSymbols, setShowSymbols] = useState(false);
   const [showPresets, setShowPresets] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { isValid, errorMessage } = useValidation(expression);
 
   const categories = useMemo(
     () => Array.from(new Set(MATH_SYMBOLS.map((symbol) => symbol.category))),
@@ -21,19 +21,12 @@ const FunctionInput: React.FC<FunctionInputProps> = ({ onAddFunction }) => {
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      if (expression.trim()) {
-        if (validateFunction(expression.trim())) {
-          onAddFunction(expression.trim());
-          setExpression('');
-          setError('');
-        } else {
-          setError('无效的函数表达式，请检查输入');
-        }
-      } else {
-        setError('请输入函数表达式');
+      if (expression.trim() && isValid) {
+        onAddFunction(expression.trim());
+        setExpression('');
       }
     },
-    [expression, onAddFunction]
+    [expression, isValid, onAddFunction]
   );
 
   const insertSymbol = useCallback(
@@ -121,10 +114,13 @@ const FunctionInput: React.FC<FunctionInputProps> = ({ onAddFunction }) => {
             value={expression}
             onChange={(e) => setExpression(e.target.value)}
             placeholder="例如: sin(x) 或 x^2"
-            className={`input-field ${!checkBracketBalance ? 'border-red-500' : ''}`}
+            className={`input-field ${
+              isValid === false ? 'border-red-500' : 
+              isValid === true ? 'border-green-500' : ''
+            }`}
             aria-label="输入函数表达式"
-            aria-invalid={!checkBracketBalance}
-            aria-describedby={!checkBracketBalance ? 'bracket-error' : undefined}
+            aria-invalid={isValid === false}
+            aria-describedby={isValid === false ? 'validation-error' : undefined}
           />
           <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
             <button
@@ -145,13 +141,13 @@ const FunctionInput: React.FC<FunctionInputProps> = ({ onAddFunction }) => {
             </button>
           </div>
         </div>
-        {error && (
-          <p className="mt-1 text-sm text-red-600 animate-fade-in" role="alert">
-            {error}
+        {errorMessage && (
+          <p id="validation-error" className="mt-1 text-sm text-red-600 animate-fade-in" role="alert">
+            {errorMessage}
           </p>
         )}
         {!checkBracketBalance && (
-          <p id="bracket-error" className="mt-1 text-sm text-amber-600 animate-fade-in" role="alert">
+          <p className="mt-1 text-sm text-amber-600 animate-fade-in" role="alert">
             括号不匹配，请检查
           </p>
         )}

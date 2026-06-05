@@ -1,81 +1,45 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import FunctionInput from './components/FunctionInput';
 import FunctionList from './components/FunctionList';
 import Graph from './components/Graph';
 import Controls from './components/Controls';
 import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
-import { FunctionItem, CoordinateRange } from './types';
-import { FUNCTION_COLORS, DEFAULT_COORDINATE_RANGE } from './config';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { useHistory } from './hooks/useHistory';
-
-const STORAGE_KEY = 'function-visualization-data';
+import { useFunctions } from './hooks/useFunctions';
+import { useCoordinateRange } from './hooks/useCoordinateRange';
 
 function App() {
-  const [savedFunctions] = useState<FunctionItem[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
   const {
-    state: functions,
-    set: setFunctions,
+    functions,
+    addFunction,
+    removeFunction,
+    clearAllFunctions,
     undo,
     canUndo,
-  } = useHistory<FunctionItem[]>(savedFunctions);
+  } = useFunctions();
 
-  const [coordinateRange, setCoordinateRange] = useState<CoordinateRange>(DEFAULT_COORDINATE_RANGE);
+  const {
+    coordinateRange,
+    updateCoordinateRange,
+  } = useCoordinateRange();
+
   const [isLoading, setIsLoading] = useState(false);
   const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(functions));
-  }, [functions]);
-
-  const addFunction = useCallback(
+  const handleAddFunction = useCallback(
     (expression: string) => {
       setIsLoading(true);
-      const color = FUNCTION_COLORS[functions.length % FUNCTION_COLORS.length];
-      setFunctions((prev) => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          expression,
-          color,
-        },
-      ]);
+      addFunction(expression);
       setTimeout(() => setIsLoading(false), 100);
     },
-    [functions.length, setFunctions]
+    [addFunction]
   );
-
-  const removeFunction = useCallback(
-    (id: string) => {
-      setFunctions((prev) => prev.filter((func) => func.id !== id));
-    },
-    [setFunctions]
-  );
-
-  const clearAllFunctions = useCallback(() => {
-    setFunctions([]);
-  }, [setFunctions]);
-
-  const updateCoordinateRange = useCallback((range: Partial<CoordinateRange>) => {
-    setCoordinateRange((prev) => ({ ...prev, ...range }));
-  }, []);
 
   useKeyboardShortcuts({
     onAddFunction: () => {
       const input = document.querySelector<HTMLInputElement>('#function');
       if (input && input.value.trim()) {
-        addFunction(input.value.trim());
+        handleAddFunction(input.value.trim());
         input.value = '';
       }
     },
@@ -107,7 +71,7 @@ function App() {
           <div className="lg:col-span-1">
             <div className="card">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">函数输入</h2>
-              <FunctionInput onAddFunction={addFunction} />
+              <FunctionInput onAddFunction={handleAddFunction} />
               <h2 className="text-lg font-semibold text-gray-900 mt-6 mb-4">函数列表</h2>
               <FunctionList functions={functions} onRemoveFunction={removeFunction} />
               {canUndo && (

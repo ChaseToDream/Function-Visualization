@@ -1,11 +1,21 @@
-import { compile } from 'mathjs';
+import { compile, EvalFunction } from 'mathjs';
+
+// 缓存编译过的表达式
+const compiledCache = new Map<string, EvalFunction>();
+
+const getCompiled = (expression: string): EvalFunction => {
+  if (!compiledCache.has(expression)) {
+    compiledCache.set(expression, compile(expression));
+  }
+  return compiledCache.get(expression)!;
+};
 
 export const validateFunction = (expression: string): boolean => {
   if (!expression || expression.trim() === '') {
     return false;
   }
   try {
-    const compiled = compile(expression);
+    const compiled = getCompiled(expression.trim());
     compiled.evaluate({ x: 0 });
     return true;
   } catch (error) {
@@ -15,8 +25,8 @@ export const validateFunction = (expression: string): boolean => {
 
 export const evaluateFunction = (expression: string, x: number): number => {
   try {
-    const compiled = compile(expression);
-    return compiled.evaluate({ x });
+    const compiled = getCompiled(expression);
+    return compiled.evaluate({ x }) as number;
   } catch (error) {
     return NaN;
   }
@@ -27,8 +37,8 @@ export const evaluateMultiplePoints = (
   xValues: number[]
 ): number[] => {
   try {
-    const compiled = compile(expression);
-    return xValues.map((x) => compiled.evaluate({ x }));
+    const compiled = getCompiled(expression);
+    return xValues.map((x) => compiled.evaluate({ x }) as number);
   } catch (error) {
     return xValues.map(() => NaN);
   }
