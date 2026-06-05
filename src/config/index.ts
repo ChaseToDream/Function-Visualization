@@ -7,13 +7,19 @@ export const FUNCTION_COLORS = [
   '#4BC0C0',
   '#9966FF',
   '#FF9F40',
-  '#E7E9ED',
   '#7CB342',
   '#F57C00',
   '#5C6BC0',
+  '#E91E63',
+  '#00BCD4',
+  '#8BC34A',
+  '#FF5722',
+  '#607D8B',
+  '#9C27B0',
 ];
 
 export const MATH_SYMBOLS: MathSymbol[] = [
+  // 运算符
   { label: '加法 (+)', value: '+', category: '运算符' },
   { label: '减法 (-)', value: '-', category: '运算符' },
   { label: '乘法 (*)', value: '*', category: '运算符' },
@@ -22,21 +28,55 @@ export const MATH_SYMBOLS: MathSymbol[] = [
   { label: '左括号 (', value: '(', category: '运算符' },
   { label: '右括号 )', value: ')', category: '运算符' },
   { label: '逗号 ,', value: ',', category: '运算符' },
+  
+  // 三角函数
   { label: 'sin', value: 'sin()', category: '三角函数' },
   { label: 'cos', value: 'cos()', category: '三角函数' },
   { label: 'tan', value: 'tan()', category: '三角函数' },
   { label: 'asin', value: 'asin()', category: '三角函数' },
   { label: 'acos', value: 'acos()', category: '三角函数' },
   { label: 'atan', value: 'atan()', category: '三角函数' },
+  { label: 'atan2', value: 'atan2()', category: '三角函数' },
+  { label: 'sec', value: '1/cos()', category: '三角函数' },
+  { label: 'csc', value: '1/sin()', category: '三角函数' },
+  { label: 'cot', value: '1/tan()', category: '三角函数' },
+  
+  // 双曲函数
+  { label: 'sinh', value: 'sinh()', category: '双曲函数' },
+  { label: 'cosh', value: 'cosh()', category: '双曲函数' },
+  { label: 'tanh', value: 'tanh()', category: '双曲函数' },
+  { label: 'asinh', value: 'asinh()', category: '双曲函数' },
+  { label: 'acosh', value: 'acosh()', category: '双曲函数' },
+  { label: 'atanh', value: 'atanh()', category: '双曲函数' },
+  
+  // 指数对数
   { label: 'exp', value: 'exp()', category: '指数对数' },
   { label: 'log', value: 'log()', category: '指数对数' },
   { label: 'ln', value: 'ln()', category: '指数对数' },
+  { label: 'log2', value: 'log2()', category: '指数对数' },
+  { label: 'log10', value: 'log10()', category: '指数对数' },
   { label: 'sqrt', value: 'sqrt()', category: '指数对数' },
+  { label: 'cbrt', value: 'cbrt()', category: '指数对数' },
+  
+  // 取整函数
+  { label: 'floor', value: 'floor()', category: '取整函数' },
+  { label: 'ceil', value: 'ceil()', category: '取整函数' },
+  { label: 'round', value: 'round()', category: '取整函数' },
+  { label: 'abs', value: 'abs()', category: '取整函数' },
+  { label: 'sign', value: 'sign()', category: '取整函数' },
+  
+  // 常量
   { label: 'π', value: 'pi', category: '常量' },
   { label: 'e', value: 'e', category: '常量' },
-  { label: '绝对值 |x|', value: 'abs()', category: '其他' },
+  { label: '∞', value: 'Infinity', category: '常量' },
+  
+  // 比较运算符
+  { label: 'min', value: 'min()', category: '比较函数' },
+  { label: 'max', value: 'max()', category: '比较函数' },
+  
+  // 其他
   { label: '阶乘 !', value: '!', category: '其他' },
-  { label: '分号 ;', value: ';', category: '其他' },
+  { label: '随机数', value: 'random()', category: '其他' },
 ];
 
 export const DEFAULT_COORDINATE_RANGE = {
@@ -56,17 +96,110 @@ export interface FunctionPreset {
   name: string;
   expression: string;
   description: string;
+  category: string;
+  tags?: string[];
 }
 
+export const PRESET_CATEGORIES = [
+  '基础函数',
+  '多项式',
+  '三角函数',
+  '反三角函数',
+  '双曲函数',
+  '指数对数',
+  '分段函数',
+  '特殊函数',
+  '参数曲线',
+  '极坐标',
+];
+
 export const FUNCTION_PRESETS: FunctionPreset[] = [
-  { name: '线性函数', expression: 'x', description: '简单的一次函数' },
-  { name: '二次函数', expression: 'x^2', description: '抛物线' },
-  { name: '三次函数', expression: 'x^3', description: '三次曲线' },
-  { name: '正弦函数', expression: 'sin(x)', description: '正弦波' },
-  { name: '余弦函数', expression: 'cos(x)', description: '余弦波' },
-  { name: '正切函数', expression: 'tan(x)', description: '正切曲线' },
-  { name: '指数函数', expression: 'exp(x)', description: '自然指数' },
-  { name: '对数函数', expression: 'log(x)', description: '自然对数' },
-  { name: '平方根', expression: 'sqrt(x)', description: '平方根函数' },
-  { name: '绝对值', expression: 'abs(x)', description: '绝对值函数' },
+  // 基础函数
+  { name: '常数函数', expression: '1', description: 'y = 1，水平直线', category: '基础函数', tags: ['常数', '直线'] },
+  { name: '线性函数', expression: 'x', description: 'y = x，斜率为1的直线', category: '基础函数', tags: ['一次', '直线'] },
+  { name: '线性函数 (负)', expression: '-x', description: 'y = -x，斜率为-1的直线', category: '基础函数', tags: ['一次', '直线'] },
+  { name: '比例函数', expression: '2*x', description: 'y = 2x，斜率为2', category: '基础函数', tags: ['一次', '直线'] },
+  { name: '截距函数', expression: 'x+1', description: 'y = x+1，带截距的直线', category: '基础函数', tags: ['一次', '直线'] },
+  
+  // 多项式
+  { name: '二次函数', expression: 'x^2', description: '抛物线，开口向上', category: '多项式', tags: ['二次', '抛物线'] },
+  { name: '二次函数 (负)', expression: '-x^2', description: '抛物线，开口向下', category: '多项式', tags: ['二次', '抛物线'] },
+  { name: '三次函数', expression: 'x^3', description: '三次曲线，S形', category: '多项式', tags: ['三次'] },
+  { name: '四次函数', expression: 'x^4', description: '四次曲线，W形', category: '多项式', tags: ['四次'] },
+  { name: '五次函数', expression: 'x^5', description: '五次曲线', category: '多项式', tags: ['五次'] },
+  { name: '完全二次', expression: '(x-1)^2+2', description: '顶点在(1,2)的抛物线', category: '多项式', tags: ['二次', '平移'] },
+  { name: '双二次', expression: 'x^4-5*x^2+4', description: '双二次函数，多个极值点', category: '多项式', tags: ['四次'] },
+  
+  // 三角函数
+  { name: '正弦函数', expression: 'sin(x)', description: '标准正弦波', category: '三角函数', tags: ['周期', '波形'] },
+  { name: '余弦函数', expression: 'cos(x)', description: '标准余弦波', category: '三角函数', tags: ['周期', '波形'] },
+  { name: '正切函数', expression: 'tan(x)', description: '正切曲线，有渐近线', category: '三角函数', tags: ['周期', '渐近线'] },
+  { name: '正弦 (2x)', expression: 'sin(2*x)', description: '频率加倍的正弦波', category: '三角函数', tags: ['周期', '频率'] },
+  { name: '正弦 (x/2)', expression: 'sin(x/2)', description: '频率减半的正弦波', category: '三角函数', tags: ['周期', '频率'] },
+  { name: '振幅正弦', expression: '2*sin(x)', description: '振幅为2的正弦波', category: '三角函数', tags: ['周期', '振幅'] },
+  { name: '相位偏移', expression: 'sin(x-pi/2)', description: '相位偏移π/2', category: '三角函数', tags: ['周期', '相位'] },
+  { name: '叠加正弦', expression: 'sin(x)+sin(2*x)', description: '两个正弦波叠加', category: '三角函数', tags: ['叠加', '谐波'] },
+  { name: '正弦加余弦', expression: 'sin(x)+cos(x)', description: '正弦余弦叠加', category: '三角函数', tags: ['叠加'] },
+  { name: '包络正弦', expression: 'exp(-x/10)*sin(x)', description: '指数衰减的正弦波', category: '三角函数', tags: ['衰减', '阻尼'] },
+  
+  // 反三角函数
+  { name: '反正弦', expression: 'asin(x)', description: '反正弦函数，定义域[-1,1]', category: '反三角函数', tags: ['反三角'] },
+  { name: '反余弦', expression: 'acos(x)', description: '反余弦函数，定义域[-1,1]', category: '反三角函数', tags: ['反三角'] },
+  { name: '反正切', expression: 'atan(x)', description: '反正切函数，有水平渐近线', category: '反三角函数', tags: ['反三角'] },
+  
+  // 双曲函数
+  { name: '双曲正弦', expression: 'sinh(x)', description: '双曲正弦函数', category: '双曲函数', tags: ['双曲'] },
+  { name: '双曲余弦', expression: 'cosh(x)', description: '双曲余弦，悬链线', category: '双曲函数', tags: ['双曲', '悬链线'] },
+  { name: '双曲正切', expression: 'tanh(x)', description: '双曲正切，S形曲线', category: '双曲函数', tags: ['双曲', 'S形'] },
+  
+  // 指数对数
+  { name: '自然指数', expression: 'exp(x)', description: 'e^x，自然指数函数', category: '指数对数', tags: ['指数', '增长'] },
+  { name: '指数衰减', expression: 'exp(-x)', description: 'e^(-x)，指数衰减', category: '指数对数', tags: ['指数', '衰减'] },
+  { name: '指数增长', expression: '2^x', description: '2^x，指数增长', category: '指数对数', tags: ['指数', '增长'] },
+  { name: '自然对数', expression: 'log(x)', description: 'ln(x)，自然对数', category: '指数对数', tags: ['对数'] },
+  { name: '常用对数', expression: 'log10(x)', description: 'log10(x)，常用对数', category: '指数对数', tags: ['对数'] },
+  { name: '平方根', expression: 'sqrt(x)', description: '√x，平方根函数', category: '指数对数', tags: ['根式'] },
+  { name: '立方根', expression: 'cbrt(x)', description: '∛x，立方根函数', category: '指数对数', tags: ['根式'] },
+  { name: '对数线性', expression: 'x*log(x)', description: 'x·ln(x)', category: '指数对数', tags: ['混合'] },
+  { name: '高斯函数', expression: 'exp(-x^2)', description: 'e^(-x²)，钟形曲线', category: '指数对数', tags: ['高斯', '钟形'] },
+  { name: '高斯分布', expression: 'exp(-x^2/2)/sqrt(2*pi)', description: '标准正态分布', category: '指数对数', tags: ['概率', '统计'] },
+  
+  // 分段函数
+  { name: '绝对值', expression: 'abs(x)', description: '|x|，V形', category: '分段函数', tags: ['绝对值', 'V形'] },
+  { name: '符号函数', expression: 'sign(x)', description: '符号函数，阶梯形', category: '分段函数', tags: ['符号', '阶梯'] },
+  { name: '取整函数', expression: 'floor(x)', description: '向下取整，阶梯形', category: '分段函数', tags: ['取整', '阶梯'] },
+  { name: '上取整', expression: 'ceil(x)', description: '向上取整', category: '分段函数', tags: ['取整', '阶梯'] },
+  { name: '四舍五入', expression: 'round(x)', description: '四舍五入', category: '分段函数', tags: ['取整'] },
+  { name: '锯齿波', expression: 'x-floor(x)', description: '锯齿波形', category: '分段函数', tags: ['周期', '锯齿'] },
+  { name: '三角波', expression: 'abs(2*(x/2-floor(x/2+1/4)))-1', description: '三角波形', category: '分段函数', tags: ['周期', '三角'] },
+  
+  // 特殊函数
+  { name: '反比例', expression: '1/x', description: '双曲线，有渐近线', category: '特殊函数', tags: ['反比例', '渐近线'] },
+  { name: '反比例平方', expression: '1/x^2', description: '反比例平方', category: '特殊函数', tags: ['反比例'] },
+  { name: '有理函数', expression: '(x^2-1)/(x^2+1)', description: '有理函数，有界', category: '特殊函数', tags: ['有理'] },
+  { name: 'Sigmoid', expression: '1/(1+exp(-x))', description: 'S形曲线，用于机器学习', category: '特殊函数', tags: ['S形', '机器学习'] },
+  { name: 'ReLU', expression: 'max(0,x)', description: 'ReLU激活函数', category: '特殊函数', tags: ['激活', '机器学习'] },
+  { name: 'Softplus', expression: 'log(1+exp(x))', description: 'Softplus激活函数', category: '特殊函数', tags: ['激活', '机器学习'] },
+  { name: 'Swish', expression: 'x/(1+exp(-x))', description: 'Swish激活函数', category: '特殊函数', tags: ['激活', '机器学习'] },
+  { name: '心脏线', expression: '1-sin(x)', description: '心脏线（极坐标）', category: '特殊函数', tags: ['极坐标'] },
+  { name: '玫瑰线', expression: 'sin(3*x)', description: '三叶玫瑰线', category: '特殊函数', tags: ['极坐标', '玫瑰'] },
+  { name: '蝴蝶曲线', expression: 'sin(x)*exp(cos(x))-2*cos(4*x)+sin(x/12)^5', description: '蝴蝶曲线近似', category: '特殊函数', tags: ['曲线'] },
+  
+  // 复合函数
+  { name: '正弦平方', expression: 'sin(x)^2', description: 'sin²(x)', category: '特殊函数', tags: ['复合'] },
+  { name: '余弦平方', expression: 'cos(x)^2', description: 'cos²(x)', category: '特殊函数', tags: ['复合'] },
+  { name: '指数正弦', expression: 'exp(sin(x))', description: 'e^(sin x)', category: '特殊函数', tags: ['复合'] },
+  { name: '对数绝对值', expression: 'log(abs(x))', description: 'ln|x|', category: '特殊函数', tags: ['复合'] },
+  { name: '正弦分之一', expression: '1/sin(x)', description: 'csc(x)，余割', category: '特殊函数', tags: ['复合', '渐近线'] },
+  { name: '余弦分之一', expression: '1/cos(x)', description: 'sec(x)，正割', category: '特殊函数', tags: ['复合', '渐近线'] },
+];
+
+export const COORDINATE_PRESETS = [
+  { name: '默认', xMin: -10, xMax: 10, yMin: -10, yMax: 10 },
+  { name: '大范围', xMin: -50, xMax: 50, yMin: -50, yMax: 50 },
+  { name: '小范围', xMin: -5, xMax: 5, yMin: -5, yMax: 5 },
+  { name: '第一象限', xMin: -1, xMax: 10, yMin: -1, yMax: 10 },
+  { name: '三角函数', xMin: -2 * Math.PI, xMax: 2 * Math.PI, yMin: -2, yMax: 2 },
+  { name: '极坐标', xMin: -15, xMax: 15, yMin: -15, yMax: 15 },
+  { name: '统计分布', xMin: -4, xMax: 4, yMin: -0.5, yMax: 1.5 },
 ];

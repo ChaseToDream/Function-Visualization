@@ -4,21 +4,34 @@ import { FunctionItem } from '../types';
 interface FunctionListProps {
   functions: FunctionItem[];
   onRemoveFunction: (id: string) => void;
+  onSelectFunction?: (expression: string) => void;
+  selectedFunctionId?: string | null;
 }
 
 const FunctionListItem: React.FC<{
   func: FunctionItem;
   index: number;
   onRemove: (id: string) => void;
-}> = React.memo(({ func, index, onRemove }) => {
+  onSelect?: (expression: string) => void;
+  isSelected?: boolean;
+}> = React.memo(({ func, index, onRemove, onSelect, isSelected }) => {
   const handleRemove = useCallback(() => {
     onRemove(func.id);
   }, [func.id, onRemove]);
 
+  const handleSelect = useCallback(() => {
+    onSelect?.(func.expression);
+  }, [func.expression, onSelect]);
+
   return (
     <li
-      className="flex items-center justify-between p-2.5 bg-white border border-surface-100 hover:border-primary-200 hover:bg-primary-50/30 rounded-xl transition-all duration-150 group"
+      className={`flex items-center justify-between p-2.5 border rounded-xl transition-all duration-150 group cursor-pointer ${
+        isSelected
+          ? 'bg-primary-50 border-primary-200'
+          : 'bg-white border-surface-100 hover:border-primary-200 hover:bg-primary-50/30'
+      }`}
       style={{ animationDelay: `${index * 30}ms` }}
+      onClick={handleSelect}
     >
       <div className="flex items-center min-w-0 gap-2.5">
         <div className="relative flex-shrink-0">
@@ -27,11 +40,21 @@ const FunctionListItem: React.FC<{
             style={{ backgroundColor: func.color }}
             aria-hidden="true"
           />
+          {isSelected && (
+            <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary-500 rounded-full" />
+          )}
         </div>
-        <span className="text-[13px] font-medium text-surface-700 truncate font-mono">{func.expression}</span>
+        <span className={`text-[13px] font-medium truncate font-mono ${
+          isSelected ? 'text-primary-700' : 'text-surface-700'
+        }`}>
+          {func.expression}
+        </span>
       </div>
       <button
-        onClick={handleRemove}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleRemove();
+        }}
         className="opacity-0 group-hover:opacity-100 text-surface-300 hover:text-accent-500 focus:outline-none ml-2 flex-shrink-0 transition-all duration-150 p-1 hover:bg-accent-50 rounded-md"
         aria-label={`删除函数 ${func.expression}`}
       >
@@ -56,7 +79,12 @@ const FunctionListItem: React.FC<{
 
 FunctionListItem.displayName = 'FunctionListItem';
 
-const FunctionList: React.FC<FunctionListProps> = React.memo(({ functions, onRemoveFunction }) => {
+const FunctionList: React.FC<FunctionListProps> = React.memo(({ 
+  functions, 
+  onRemoveFunction, 
+  onSelectFunction,
+  selectedFunctionId 
+}) => {
   const handleRemove = useCallback(
     (id: string) => {
       onRemoveFunction(id);
@@ -81,13 +109,15 @@ const FunctionList: React.FC<FunctionListProps> = React.memo(({ functions, onRem
   }
 
   return (
-    <ul className="space-y-2" aria-label="已添加的函数列表">
+    <ul className="space-y-1.5" aria-label="已添加的函数列表">
       {functions.map((func, index) => (
         <FunctionListItem
           key={func.id}
           func={func}
           index={index}
           onRemove={handleRemove}
+          onSelect={onSelectFunction}
+          isSelected={selectedFunctionId === func.expression}
         />
       ))}
     </ul>
