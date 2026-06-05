@@ -23,11 +23,11 @@ const Controls: React.FC<ControlsProps> = React.memo(({ coordinateRange, onUpdat
   ], [coordinateRange]);
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {inputs.slice(0, 2).map(({ id, label, value }) => (
           <div key={id}>
-            <label htmlFor={id} className="block text-xs font-medium text-surface-500 mb-1.5">
+            <label htmlFor={id} className="block text-[11px] font-medium text-surface-400 mb-1">
               {label}
             </label>
             <input
@@ -36,16 +36,16 @@ const Controls: React.FC<ControlsProps> = React.memo(({ coordinateRange, onUpdat
               name={id}
               value={value}
               onChange={handleInputChange}
-              className="input-field text-sm py-2.5"
+              className="input-field text-[13px] py-2"
               aria-label={`${label}轴`}
             />
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {inputs.slice(2).map(({ id, label, value }) => (
           <div key={id}>
-            <label htmlFor={id} className="block text-xs font-medium text-surface-500 mb-1.5">
+            <label htmlFor={id} className="block text-[11px] font-medium text-surface-400 mb-1">
               {label}
             </label>
             <input
@@ -54,16 +54,16 @@ const Controls: React.FC<ControlsProps> = React.memo(({ coordinateRange, onUpdat
               name={id}
               value={value}
               onChange={handleInputChange}
-              className="input-field text-sm py-2.5"
+              className="input-field text-[13px] py-2"
               aria-label={`${label}轴`}
             />
           </div>
         ))}
       </div>
-      <div className="pt-3 border-t border-surface-100">
-        <div className="flex items-center justify-between text-xs text-surface-500">
+      <div className="pt-2.5 border-t border-surface-100">
+        <div className="flex items-center justify-between text-[11px] text-surface-400">
           <span>显示范围</span>
-          <span className="font-mono">[{coordinateRange.xMin}, {coordinateRange.xMax}]</span>
+          <span className="font-mono text-surface-500">[{coordinateRange.xMin}, {coordinateRange.xMax}]</span>
         </div>
       </div>
     </div>

@@ -17,7 +17,7 @@ describe('FunctionList', () => {
     );
 
     expect(screen.getByText('暂无函数')).toBeInTheDocument();
-    expect(screen.getByText('在上方输入表达式添加函数')).toBeInTheDocument();
+    expect(screen.getByText('在上方输入表达式添加')).toBeInTheDocument();
   });
 
   it('should render function list', () => {
