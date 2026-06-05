@@ -13,17 +13,24 @@
 - **预设函数库** - 内置常用数学函数，一键添加
 - **图像导出** - 支持导出 PNG 和 SVG 格式
 
+### 数据管理
+
+- **数据导出** - 支持导出为 JSON 和 CSV 格式
+- **数据导入** - 从 JSON 文件导入函数配置
+- **数据持久化** - 本地存储，刷新不丢失
+
 ### 交互功能
 
 - **实时验证** - 输入时自动验证表达式，即时反馈错误
 - **键盘快捷键** - 提高操作效率
 - **撤销/重做** - 支持操作历史回溯
-- **数据持久化** - 本地存储，刷新不丢失
+- **通知系统** - 操作反馈和状态提示
 
 ### 用户体验
 
+- **多页面路由** - 可视化、函数库、设置、关于
 - **响应式设计** - 完美适配桌面和移动端
-- **深色模式** - 护眼设计（即将推出）
+- **代码分割** - 懒加载优化性能
 - **无障碍支持** - ARIA 标签，键盘导航
 
 ## 技术栈
@@ -34,8 +41,11 @@
 | 类型系统 | TypeScript |
 | 构建工具 | Vite |
 | 样式方案 | Tailwind CSS |
+| 状态管理 | Zustand |
+| 路由管理 | React Router 7 |
 | 数学计算 | mathjs |
 | 函数绘图 | function-plot |
+| 文件导出 | file-saver + papaparse |
 | 测试框架 | Vitest |
 
 ## 快速开始
@@ -92,6 +102,15 @@ npm run preview
 | `npm run lint` | 代码检查 |
 | `npm run format` | 代码格式化 |
 
+### 页面路由
+
+| 路径 | 页面 | 说明 |
+|------|------|------|
+| `/` | 可视化 | 主要的函数可视化页面 |
+| `/gallery` | 函数库 | 预设函数浏览和添加 |
+| `/settings` | 设置 | 数据导入导出、配置管理 |
+| `/about` | 关于 | 项目信息和技术栈 |
+
 ### 键盘快捷键
 
 | 快捷键 | 功能 |
@@ -112,24 +131,32 @@ src/
 │   ├── FunctionInput.tsx    # 函数输入组件
 │   ├── FunctionList.tsx     # 函数列表组件
 │   ├── Graph.tsx            # 函数图像组件
-│   └── KeyboardShortcutsHelp.tsx  # 快捷键帮助
+│   ├── KeyboardShortcutsHelp.tsx  # 快捷键帮助
+│   └── Notification.tsx     # 通知组件
 ├── config/                  # 配置文件
 │   └── index.ts             # 颜色、符号、预设配置
 ├── hooks/                   # 自定义 Hooks
-│   ├── useCoordinateRange.ts # 坐标范围管理
-│   ├── useFunctions.ts      # 函数列表管理
-│   ├── useHistory.ts        # 历史记录（撤销/重做）
 │   ├── useKeyboardShortcuts.ts # 快捷键处理
-│   ├── useLocalStorage.ts   # 本地存储抽象
 │   └── useValidation.ts     # 输入验证
+├── layouts/                 # 布局组件
+│   └── MainLayout.tsx       # 主布局（导航、侧边栏）
+├── pages/                   # 页面组件
+│   ├── VisualizationPage.tsx # 可视化页面
+│   ├── GalleryPage.tsx      # 函数库页面
+│   ├── SettingsPage.tsx     # 设置页面
+│   └── AboutPage.tsx        # 关于页面
+├── stores/                  # Zustand 状态管理
+│   ├── functionStore.ts     # 函数和坐标状态
+│   └── uiStore.ts           # UI 状态（通知、模态框）
 ├── types/                   # TypeScript 类型
 │   └── index.ts             # 接口定义
 ├── utils/                   # 工具函数
 │   ├── debounce.ts          # 防抖/节流
+│   ├── export.ts            # 数据导入导出
 │   └── math.ts              # 数学计算
 ├── test/                    # 测试配置
 │   └── setup.ts             # 测试环境
-├── App.tsx                  # 主应用
+├── App.tsx                  # 路由配置
 ├── main.tsx                 # 入口文件
 └── index.css                # 全局样式
 ```
@@ -138,28 +165,40 @@ src/
 
 ### 状态管理
 
-采用自定义 Hooks 模式，实现关注点分离：
+采用 Zustand 进行集中状态管理：
 
 ```
-App.tsx
-  ├── useFunctions()      # 函数列表状态
-  ├── useCoordinateRange() # 坐标范围状态
-  └── useKeyboardShortcuts() # 快捷键处理
+stores/
+  ├── functionStore.ts    # 函数列表、坐标范围、历史记录
+  └── uiStore.ts          # 通知、模态框、侧边栏状态
+```
+
+### 路由结构
+
+```
+/ (MainLayout)
+  ├── / (VisualizationPage)    # 主页面
+  ├── /gallery (GalleryPage)   # 函数库
+  ├── /settings (SettingsPage) # 设置
+  └── /about (AboutPage)       # 关于
 ```
 
 ### 性能优化
 
+- **代码分割** - 页面组件懒加载
 - **表达式缓存** - 编译后的表达式缓存复用
 - **组件 memo** - React.memo 防止无效重渲染
 - **防抖处理** - 窗口 resize 等事件防抖
-- **useMemo/useCallback** - 计算密集型操作优化
+- **Zustand** - 轻量级状态管理，按需订阅
 
 ### 数据流
 
 ```
-用户输入 → 验证 → 添加到列表 → 更新图像
+用户输入 → 验证 → Zustand Store → 组件更新
                 ↓
-            本地存储（持久化）
+            localStorage（持久化）
+                ↓
+            导出（JSON/CSV）
 ```
 
 ## 测试
@@ -240,3 +279,5 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 - [mathjs](https://mathjs.org/) - 强大的数学计算库
 - [function-plot](https://mauriciopoppe.github.io/function-plot/) - 函数绘图库
 - [Tailwind CSS](https://tailwindcss.com/) - 实用优先的 CSS 框架
+- [Zustand](https://zustand-demo.pmnd.rs/) - 轻量级状态管理
+- [React Router](https://reactrouter.com/) - 声明式路由
