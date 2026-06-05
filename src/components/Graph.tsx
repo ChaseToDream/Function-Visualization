@@ -2,17 +2,21 @@ import React, { useRef, useEffect, useMemo, useCallback, useState } from 'react'
 import functionPlot from 'function-plot';
 import { FunctionItem, CoordinateRange, GraphOptions } from '../types';
 import { GRAPH_DEFAULTS } from '../config';
+import { debounce } from '../utils/debounce';
 
 interface GraphProps {
   functions: FunctionItem[];
   coordinateRange: CoordinateRange;
 }
 
+const DEBOUNCE_DELAY = 150;
+
 const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
   const graphRef = useRef<HTMLDivElement>(null);
   const graphId = useMemo(() => `graph-${Date.now()}`, []);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const createGraphOptions = useCallback(
     (width: number, height: number): GraphOptions => ({
@@ -52,6 +56,11 @@ const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
     }
   }, [createGraphOptions]);
 
+  const debouncedRenderGraph = useMemo(
+    () => debounce(renderGraph, DEBOUNCE_DELAY),
+    [renderGraph]
+  );
+
   const exportAsPNG = useCallback(() => {
     if (graphRef.current) {
       const canvas = graphRef.current.querySelector('canvas');
@@ -80,21 +89,41 @@ const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
     }
   }, []);
 
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      graphRef.current?.parentElement?.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  }, []);
+
   useEffect(() => {
     renderGraph();
   }, [renderGraph]);
 
   useEffect(() => {
     const handleResize = () => {
-      renderGraph();
+      debouncedRenderGraph();
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, [debouncedRenderGraph]);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      setTimeout(renderGraph, 100);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, [renderGraph]);
 
   return (
-    <div className="relative">
+    <div className={`relative ${isFullscreen ? 'bg-white p-4' : ''}`}>
       {isLoading && (
         <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
           <div className="flex items-center text-sm text-blue-600">
@@ -119,26 +148,37 @@ const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
           </div>
         </div>
       )}
-      <div className="flex justify-end gap-2 mb-2">
-        <button
-          onClick={exportAsPNG}
-          className="btn-secondary text-sm"
-          disabled={isLoading || !!error}
-        >
-          导出 PNG
-        </button>
-        <button
-          onClick={exportAsSVG}
-          className="btn-secondary text-sm"
-          disabled={isLoading || !!error}
-        >
-          导出 SVG
-        </button>
+      <div className="flex justify-between items-center gap-2 mb-2">
+        <div className="flex gap-1">
+          <button
+            onClick={toggleFullscreen}
+            className="btn-secondary text-xs px-2 py-1"
+            title={isFullscreen ? '退出全屏' : '全屏显示'}
+          >
+            {isFullscreen ? '⊡' : '⊞'}
+          </button>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={exportAsPNG}
+            className="btn-secondary text-sm"
+            disabled={isLoading || !!error}
+          >
+            导出 PNG
+          </button>
+          <button
+            onClick={exportAsSVG}
+            className="btn-secondary text-sm"
+            disabled={isLoading || !!error}
+          >
+            导出 SVG
+          </button>
+        </div>
       </div>
       <div
         id={graphId}
         ref={graphRef}
-        className="w-full h-96 border border-gray-200 rounded-md"
+        className={`w-full border border-gray-200 rounded-md ${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-96'}`}
         role="img"
         aria-label="函数图像显示区域"
       />
