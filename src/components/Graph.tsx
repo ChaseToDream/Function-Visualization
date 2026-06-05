@@ -14,7 +14,7 @@ const DEBOUNCE_DELAY = 200;
 
 const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
   const graphRef = useRef<HTMLDivElement>(null);
-  const graphId = useMemo(() => `graph-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`, []);
+  const graphId = useMemo(() => `graph-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`, []);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -223,7 +223,7 @@ const Graph: React.FC<GraphProps> = ({ functions, coordinateRange }) => {
       <div
         id={graphId}
         ref={graphRef}
-        className={`w-full bg-white border border-surface-200 rounded-lg ${isFullscreen ? 'h-[calc(100vh-180px)]' : 'h-[480px]'}`}
+        className={`w-full bg-white border border-surface-200 rounded-lg ${isFullscreen ? 'h-[calc(100vh-180px)]' : 'min-h-[300px] h-[60vh] max-h-[600px]'}`}
         role="img"
         aria-label="函数图像显示区域"
       />

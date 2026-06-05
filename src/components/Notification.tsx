@@ -49,7 +49,7 @@ const Notification: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 space-y-2">
+    <div className="fixed bottom-4 right-4 z-50 space-y-2" aria-live="polite" role="status">
       {notifications.map((notification) => (
         <div
           key={notification.id}

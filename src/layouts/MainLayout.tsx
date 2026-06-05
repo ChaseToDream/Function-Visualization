@@ -14,7 +14,7 @@ const MainLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-surface-100">
+    <div className="min-h-screen bg-surface-100 funcviz-app">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-surface-200">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">

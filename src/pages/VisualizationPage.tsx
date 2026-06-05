@@ -1,4 +1,5 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import FunctionInput from '../components/FunctionInput';
 import FunctionList from '../components/FunctionList';
 import FunctionEvaluator from '../components/FunctionEvaluator';
@@ -8,15 +9,16 @@ import Graph from '../components/Graph';
 import Controls from '../components/Controls';
 import CoordinatePresets from '../components/CoordinatePresets';
 import KeyboardShortcutsHelp from '../components/KeyboardShortcutsHelp';
-import { useFunctionStore } from '../stores/functionStore';
+import { useFunctionStore, useFunctions, useCoordinateRange, useIsLoading, useShowShortcutsHelp } from '../stores/functionStore';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 const VisualizationPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const functions = useFunctions();
+  const coordinateRange = useCoordinateRange();
+  const isLoading = useIsLoading();
+  const showShortcutsHelp = useShowShortcutsHelp();
   const {
-    functions,
-    coordinateRange,
-    isLoading,
-    showShortcutsHelp,
     addFunction,
     removeFunction,
     clearAllFunctions,
@@ -26,6 +28,28 @@ const VisualizationPage: React.FC = () => {
     setIsLoading,
     setShowShortcutsHelp,
   } = useFunctionStore();
+
+  // 解析 URL 参数
+  useEffect(() => {
+    const urlFunctions = searchParams.getAll('f');
+    const xmin = searchParams.get('xmin');
+    const xmax = searchParams.get('xmax');
+    const ymin = searchParams.get('ymin');
+    const ymax = searchParams.get('ymax');
+    
+    if (urlFunctions.length > 0) {
+      urlFunctions.forEach((expr) => addFunction(expr));
+    }
+    
+    if (xmin && xmax && ymin && ymax) {
+      updateCoordinateRange({
+        xMin: parseFloat(xmin),
+        xMax: parseFloat(xmax),
+        yMin: parseFloat(ymin),
+        yMax: parseFloat(ymax),
+      });
+    }
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   const [showEvaluator, setShowEvaluator] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);

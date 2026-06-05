@@ -28,7 +28,7 @@ export const useUIStore = create<UIStore>()((set) => ({
   
   notifications: [],
   addNotification: (notification) => {
-    const id = `${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+    const id = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
     set((state) => ({
       notifications: [...state.notifications, { ...notification, id }],
     }));

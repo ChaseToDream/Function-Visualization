@@ -1,4 +1,4 @@
-import { compile } from 'mathjs';
+import { EvalFunction, compile } from 'mathjs';
 
 export interface FunctionAnalysis {
   zeros: number[];
@@ -23,9 +23,19 @@ export interface Intersection {
   y: number;
 }
 
+// 缓存编译过的表达式，避免重复编译
+const compiledCache = new Map<string, EvalFunction>();
+
+const getCompiled = (expression: string): EvalFunction => {
+  if (!compiledCache.has(expression)) {
+    compiledCache.set(expression, compile(expression));
+  }
+  return compiledCache.get(expression)!;
+};
+
 const evaluateAt = (expression: string, x: number): number => {
   try {
-    const compiled = compile(expression);
+    const compiled = getCompiled(expression);
     return compiled.evaluate({ x }) as number;
   } catch {
     return NaN;

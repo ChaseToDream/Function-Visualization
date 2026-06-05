@@ -18,7 +18,7 @@ export const exportAsJSON = (
   filename?: string
 ): void => {
   const data: ExportData = {
-    version: '2.0',
+    version: '2.1',
     timestamp: new Date().toISOString(),
     functions: functions.map((f) => ({
       expression: f.expression,
@@ -75,19 +75,41 @@ export const importFromJSON = (file: File): Promise<ExportData> => {
       try {
         const data = JSON.parse(event.target?.result as string) as ExportData;
         
-        // Validate data structure
+        // Validate top-level structure
         if (!data.version || !data.functions || !data.coordinateRange) {
-          throw new Error('Invalid file format');
+          throw new Error('文件格式无效：缺少必要的字段');
+        }
+        
+        // Validate functions array
+        if (!Array.isArray(data.functions)) {
+          throw new Error('文件格式无效：functions 应该是数组');
+        }
+        
+        // Validate each function object
+        data.functions.forEach((func, index) => {
+          if (!func.expression || typeof func.expression !== 'string') {
+            throw new Error(`函数 #${index + 1} 缺少 expression 字段`);
+          }
+          if (!func.color || typeof func.color !== 'string') {
+            throw new Error(`函数 #${index + 1} 缺少 color 字段`);
+          }
+        });
+        
+        // Validate coordinateRange
+        const { xMin, xMax, yMin, yMax } = data.coordinateRange;
+        if (typeof xMin !== 'number' || typeof xMax !== 'number' || 
+            typeof yMin !== 'number' || typeof yMax !== 'number') {
+          throw new Error('坐标范围格式无效');
         }
         
         resolve(data);
       } catch (error) {
-        reject(new Error('Failed to parse JSON file'));
+        reject(error instanceof Error ? error : new Error('解析 JSON 文件失败'));
       }
     };
     
     reader.onerror = () => {
-      reject(new Error('Failed to read file'));
+      reject(new Error('读取文件失败'));
     };
     
     reader.readAsText(file);

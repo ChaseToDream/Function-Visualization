@@ -70,8 +70,6 @@ export interface ShareConfig {
   range: CoordinateRange;
 }
 
-export type Theme = 'light' | 'system';
-
 export type ExportFormat = 'json' | 'csv' | 'png' | 'svg';
 
 export type GraphStyle = 'solid' | 'dashed' | 'dotted';

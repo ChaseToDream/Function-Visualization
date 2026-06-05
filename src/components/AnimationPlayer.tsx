@@ -17,7 +17,7 @@ const AnimationPlayer: React.FC<AnimationPlayerProps> = ({
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentValue, setCurrentValue] = useState(0);
-  const [direction, setDirection] = useState(1);
+  const directionRef = useRef(1);  // 使用 useRef 替代 useState
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);
 
@@ -29,15 +29,15 @@ const AnimationPlayer: React.FC<AnimationPlayerProps> = ({
       lastTimeRef.current = timestamp;
       
       setCurrentValue((prev) => {
-        const step = (range.max - range.min) / 100 * direction;
+        const step = (range.max - range.min) / 100 * directionRef.current;
         let next = prev + step;
         
         if (next >= range.max) {
           next = range.max;
-          setDirection(-1);
+          directionRef.current = -1;
         } else if (next <= range.min) {
           next = range.min;
-          setDirection(1);
+          directionRef.current = 1;
         }
         
         onParameterChange(next);
@@ -46,7 +46,7 @@ const AnimationPlayer: React.FC<AnimationPlayerProps> = ({
     }
     
     animationRef.current = requestAnimationFrame(animate);
-  }, [range, speed, direction, onParameterChange]);
+  }, [range, speed, onParameterChange]);  // 移除 direction 依赖
 
   useEffect(() => {
     if (isPlaying) {

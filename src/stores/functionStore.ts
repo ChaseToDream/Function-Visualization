@@ -50,7 +50,7 @@ export const useFunctionStore = create<FunctionStore>()(
         const { functions, history } = get();
         const color = FUNCTION_COLORS[functions.length % FUNCTION_COLORS.length];
         const newFunction: FunctionItem = {
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
           expression,
           color,
         };
