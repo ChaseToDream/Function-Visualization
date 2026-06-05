@@ -1,6 +1,9 @@
 import * as math from 'mathjs';
 
 export const validateFunction = (expression: string): boolean => {
+  if (!expression || expression.trim() === '') {
+    return false;
+  }
   try {
     // 尝试解析函数表达式
     const compiled = math.compile(expression);

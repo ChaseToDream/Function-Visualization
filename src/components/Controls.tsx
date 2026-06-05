@@ -1,11 +1,5 @@
-import React from 'react';
-
-interface CoordinateRange {
-  xMin: number;
-  xMax: number;
-  yMin: number;
-  yMax: number;
-}
+import React, { useCallback } from 'react';
+import { CoordinateRange } from '../types';
 
 interface ControlsProps {
   coordinateRange: CoordinateRange;
@@ -13,10 +7,13 @@ interface ControlsProps {
 }
 
 const Controls: React.FC<ControlsProps> = ({ coordinateRange, onUpdateCoordinateRange }) => {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    onUpdateCoordinateRange({ [name]: parseFloat(value) });
-  };
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      onUpdateCoordinateRange({ [name]: parseFloat(value) });
+    },
+    [onUpdateCoordinateRange]
+  );
 
   return (
     <div className="space-y-4">
@@ -31,7 +28,8 @@ const Controls: React.FC<ControlsProps> = ({ coordinateRange, onUpdateCoordinate
             name="xMin"
             value={coordinateRange.xMin}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-field"
+            aria-label="X轴最小值"
           />
         </div>
         <div>
@@ -44,7 +42,8 @@ const Controls: React.FC<ControlsProps> = ({ coordinateRange, onUpdateCoordinate
             name="xMax"
             value={coordinateRange.xMax}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-field"
+            aria-label="X轴最大值"
           />
         </div>
       </div>
@@ -59,7 +58,8 @@ const Controls: React.FC<ControlsProps> = ({ coordinateRange, onUpdateCoordinate
             name="yMin"
             value={coordinateRange.yMin}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-field"
+            aria-label="Y轴最小值"
           />
         </div>
         <div>
@@ -72,7 +72,8 @@ const Controls: React.FC<ControlsProps> = ({ coordinateRange, onUpdateCoordinate
             name="yMax"
             value={coordinateRange.yMax}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-field"
+            aria-label="Y轴最大值"
           />
         </div>
       </div>
@@ -80,4 +81,4 @@ const Controls: React.FC<ControlsProps> = ({ coordinateRange, onUpdateCoordinate
   );
 };
 
-export default Controls;
+export default React.memo(Controls);

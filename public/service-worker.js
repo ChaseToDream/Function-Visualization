@@ -1,28 +1,20 @@
 const CACHE_NAME = 'function-visualization-cache-v1';
-const ASSETS = [
+const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/assets/index-DnX5kRmw.css',
-  '/assets/index-CZO0N16O.js',
-  '/assets/vendor-v4ha15EW.js',
-  '/assets/plot-Dq2E8QPJ.js',
-  '/assets/math-X4nR47y7.js',
   '/vite.svg',
-  '/manifest.json'
+  '/manifest.json',
 ];
 
-// 安装service worker，缓存静态资源
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(ASSETS);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Opened cache');
+      return cache.addAll(STATIC_ASSETS);
+    })
   );
 });
 
-// 激活service worker，清理旧缓存
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -38,15 +30,32 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 拦截网络请求，优先使用缓存
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
+  if (event.request.url.includes('/assets/')) {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return networkResponse;
+        });
+      })
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
         if (response) {
           return response;
         }
         return fetch(event.request);
       })
-  );
+    );
+  }
 });
