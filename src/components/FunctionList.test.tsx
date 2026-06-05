@@ -16,8 +16,8 @@ describe('FunctionList', () => {
       <FunctionList functions={[]} onRemoveFunction={mockOnRemoveFunction} />
     );
 
-    expect(screen.getByText('NO FUNCTIONS')).toBeInTheDocument();
-    expect(screen.getByText('Add an expression above')).toBeInTheDocument();
+    expect(screen.getByText('暂无函数')).toBeInTheDocument();
+    expect(screen.getByText('在上方输入表达式添加函数')).toBeInTheDocument();
   });
 
   it('should render function list', () => {
