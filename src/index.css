@@ -199,3 +199,167 @@ input[type="number"] {
 input::placeholder {
   animation: placeholderPulse 3s ease-in-out infinite;
 }
+
+/* Dark mode support */
+@layer base {
+  .dark {
+    color-scheme: dark;
+  }
+
+  .dark body {
+    @apply bg-gray-900 text-gray-100;
+    background-image: 
+      radial-gradient(at 10% 90%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+      radial-gradient(at 90% 10%, rgba(236, 72, 153, 0.05) 0%, transparent 40%);
+  }
+
+  .dark .card,
+  .dark .card-flat {
+    @apply bg-gray-800 border-gray-700;
+  }
+
+  .dark .input-field {
+    @apply bg-gray-800 border-gray-600 text-gray-100 placeholder:text-gray-500;
+  }
+
+  .dark .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600;
+  }
+
+  .dark .btn-secondary {
+    @apply bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700;
+  }
+
+  .dark .btn-ghost {
+    @apply text-gray-300 hover:bg-gray-800 hover:text-gray-100;
+  }
+
+  .dark .btn-danger {
+    @apply bg-red-900/30 border-red-800 text-red-300 hover:bg-red-900/50;
+  }
+
+  .dark .section-title {
+    @apply text-gray-400;
+  }
+
+  .dark .badge {
+    @apply bg-primary-900/50 text-primary-300;
+  }
+
+  .dark header {
+    @apply bg-gray-900/90 border-gray-800;
+  }
+
+  .dark footer {
+    @apply bg-gray-900 border-gray-800;
+  }
+
+  .dark .bg-surface-50 {
+    @apply bg-gray-800;
+  }
+
+  .dark .bg-surface-100 {
+    @apply bg-gray-700;
+  }
+
+  .dark .border-surface-100 {
+    @apply border-gray-700;
+  }
+
+  .dark .border-surface-200 {
+    @apply border-gray-600;
+  }
+
+  .dark .text-surface-400 {
+    @apply text-gray-500;
+  }
+
+  .dark .text-surface-500 {
+    @apply text-gray-400;
+  }
+
+  .dark .text-surface-600 {
+    @apply text-gray-300;
+  }
+
+  .dark .text-surface-700 {
+    @apply text-gray-200;
+  }
+
+  .dark .text-surface-800 {
+    @apply text-gray-100;
+  }
+
+  .dark .text-surface-900 {
+    @apply text-white;
+  }
+
+  .dark kbd {
+    @apply bg-gray-700 border-gray-600 text-gray-200;
+  }
+}
+
+/* KaTeX styles */
+.formula-display .katex {
+  font-size: 1em;
+}
+
+.formula-display .katex-display {
+  margin: 0.5em 0;
+}
+
+/* Custom accent colors */
+[data-accent="purple"] {
+  --accent-50: #faf5ff;
+  --accent-100: #f3e8ff;
+  --accent-200: #e9d5ff;
+  --accent-300: #d8b4fe;
+  --accent-400: #c084fc;
+  --accent-500: #a855f7;
+  --accent-600: #9333ea;
+  --accent-700: #7e22ce;
+}
+
+[data-accent="green"] {
+  --accent-50: #f0fdf4;
+  --accent-100: #dcfce7;
+  --accent-200: #bbf7d0;
+  --accent-300: #86efac;
+  --accent-400: #4ade80;
+  --accent-500: #22c55e;
+  --accent-600: #16a34a;
+  --accent-700: #15803d;
+}
+
+[data-accent="red"] {
+  --accent-50: #fef2f2;
+  --accent-100: #fee2e2;
+  --accent-200: #fecaca;
+  --accent-300: #fca5a5;
+  --accent-400: #f87171;
+  --accent-500: #ef4444;
+  --accent-600: #dc2626;
+  --accent-700: #b91c1c;
+}
+
+[data-accent="orange"] {
+  --accent-50: #fff7ed;
+  --accent-100: #ffedd5;
+  --accent-200: #fed7aa;
+  --accent-300: #fdba74;
+  --accent-400: #fb923c;
+  --accent-500: #f97316;
+  --accent-600: #ea580c;
+  --accent-700: #c2410c;
+}
+
+[data-accent="pink"] {
+  --accent-50: #fdf2f8;
+  --accent-100: #fce7f3;
+  --accent-200: #fbcfe8;
+  --accent-300: #f9a8d4;
+  --accent-400: #f472b6;
+  --accent-500: #ec4899;
+  --accent-600: #db2777;
+  --accent-700: #be185d;
+}

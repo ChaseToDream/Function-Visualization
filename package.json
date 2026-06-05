@@ -17,6 +17,7 @@
     "autoprefixer": "^10.4.0",
     "file-saver": "^2.0.5",
     "function-plot": "^1.23.0",
+    "katex": "^0.17.0",
     "mathjs": "^12.4.0",
     "papaparse": "^5.5.3",
     "postcss": "^8.4.0",

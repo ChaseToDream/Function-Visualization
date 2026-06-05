@@ -2,6 +2,8 @@ import React, { useCallback, useState } from 'react';
 import FunctionInput from '../components/FunctionInput';
 import FunctionList from '../components/FunctionList';
 import FunctionEvaluator from '../components/FunctionEvaluator';
+import FunctionAnalysisPanel from '../components/FunctionAnalysisPanel';
+import AnimationPlayer from '../components/AnimationPlayer';
 import Graph from '../components/Graph';
 import Controls from '../components/Controls';
 import CoordinatePresets from '../components/CoordinatePresets';
@@ -26,7 +28,10 @@ const VisualizationPage: React.FC = () => {
   } = useFunctionStore();
 
   const [showEvaluator, setShowEvaluator] = useState(false);
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false);
   const [selectedFunction, setSelectedFunction] = useState<string | null>(null);
+  const [animationParam, setAnimationParam] = useState(0);
 
   const handleAddFunction = useCallback(
     (expression: string) => {
@@ -36,6 +41,10 @@ const VisualizationPage: React.FC = () => {
     },
     [addFunction, setIsLoading]
   );
+
+  const handleAnimationParamChange = useCallback((value: number) => {
+    setAnimationParam(value);
+  }, []);
 
   useKeyboardShortcuts({
     onAddFunction: () => {
@@ -48,6 +57,12 @@ const VisualizationPage: React.FC = () => {
     onClearAll: clearAllFunctions,
     onUndo: undo,
   });
+
+  const getAnimatedExpression = () => {
+    if (!selectedFunction) return '';
+    // Replace 'a' parameter with current animation value
+    return selectedFunction.replace(/\ba\b/g, `(${animationParam.toFixed(2)})`);
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
@@ -80,11 +95,11 @@ const VisualizationPage: React.FC = () => {
           />
           
           {/* Action Buttons */}
-          <div className="flex gap-2 mt-4 pt-3 border-t border-surface-100">
+          <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-surface-100">
             {canUndo() && (
               <button
                 onClick={undo}
-                className="flex-1 btn-secondary text-xs py-2 gap-1.5"
+                className="btn-secondary text-xs py-2 gap-1.5"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -96,7 +111,8 @@ const VisualizationPage: React.FC = () => {
               <>
                 <button
                   onClick={() => setShowEvaluator(!showEvaluator)}
-                  className={`flex-1 btn-secondary text-xs py-2 gap-1.5 ${showEvaluator ? 'bg-primary-50 border-primary-200 text-primary-700' : ''}`}
+                  className={`flex-1 btn-secondary text-xs py-2 gap-1 ${showEvaluator ? 'bg-primary-50 border-primary-200 text-primary-700' : ''}`}
+                  title="函数求值"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -104,8 +120,28 @@ const VisualizationPage: React.FC = () => {
                   求值
                 </button>
                 <button
+                  onClick={() => setShowAnalysis(!showAnalysis)}
+                  className={`flex-1 btn-secondary text-xs py-2 gap-1 ${showAnalysis ? 'bg-primary-50 border-primary-200 text-primary-700' : ''}`}
+                  title="函数分析"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  分析
+                </button>
+                <button
+                  onClick={() => setShowAnimation(!showAnimation)}
+                  className={`btn-secondary text-xs py-2 px-3 gap-1 ${showAnimation ? 'bg-primary-50 border-primary-200 text-primary-700' : ''}`}
+                  title="动画演示"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+                <button
                   onClick={clearAllFunctions}
-                  className="btn-danger text-xs py-2 px-3 gap-1.5"
+                  className="btn-danger text-xs py-2 px-3 gap-1"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -121,7 +157,30 @@ const VisualizationPage: React.FC = () => {
         {showEvaluator && selectedFunction && (
           <div className="card">
             <h2 className="section-title">函数求值</h2>
-            <FunctionEvaluator expression={selectedFunction} />
+            <FunctionEvaluator expression={getAnimatedExpression() || selectedFunction} />
+          </div>
+        )}
+
+        {/* Function Analysis */}
+        {showAnalysis && selectedFunction && (
+          <div className="card">
+            <h2 className="section-title">函数分析</h2>
+            <FunctionAnalysisPanel 
+              expression={getAnimatedExpression() || selectedFunction}
+              xRange={{ min: coordinateRange.xMin, max: coordinateRange.xMax }}
+            />
+          </div>
+        )}
+
+        {/* Animation Player */}
+        {showAnimation && selectedFunction && (
+          <div className="card">
+            <h2 className="section-title">动画演示</h2>
+            <AnimationPlayer
+              baseExpression={selectedFunction}
+              parameter="a"
+              onParameterChange={handleAnimationParamChange}
+            />
           </div>
         )}
 
@@ -159,7 +218,19 @@ const VisualizationPage: React.FC = () => {
           
           {/* Graph Container */}
           <div className="relative bg-surface-50/50 border border-surface-100 rounded-xl overflow-hidden">
-            <Graph functions={functions} coordinateRange={coordinateRange} />
+            <Graph 
+              functions={
+                showAnimation && selectedFunction
+                  ? functions.map((f) => ({
+                      ...f,
+                      expression: f.expression === selectedFunction 
+                        ? getAnimatedExpression() 
+                        : f.expression,
+                    }))
+                  : functions
+              } 
+              coordinateRange={coordinateRange} 
+            />
           </div>
           
           {/* Graph Info */}
