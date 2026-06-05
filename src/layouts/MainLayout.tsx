@@ -14,16 +14,16 @@ const MainLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-surface-50">
+    <div className="min-h-screen bg-surface-100">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-surface-100">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-surface-200">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14">
             <div className="flex items-center gap-4">
               {/* Mobile menu button */}
               <button
                 onClick={toggleSidebar}
-                className="lg:hidden p-2 text-surface-500 hover:text-surface-700 hover:bg-surface-100 rounded-lg"
+                className="lg:hidden p-2 text-surface-600 hover:text-surface-800 hover:bg-surface-100 rounded-lg"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -36,10 +36,10 @@ const MainLayout: React.FC = () => {
                   <span className="text-white font-bold text-sm">F</span>
                 </div>
                 <div className="hidden sm:block">
-                  <h1 className="text-lg font-bold text-surface-900 leading-none">
+                  <h1 className="text-lg font-bold text-surface-800 leading-none">
                     Func<span className="text-primary-600">Viz</span>
                   </h1>
-                  <p className="text-[10px] text-surface-400">函数可视化工具</p>
+                  <p className="text-[10px] text-surface-500">函数可视化工具</p>
                 </div>
               </Link>
             </div>
@@ -52,8 +52,8 @@ const MainLayout: React.FC = () => {
                   to={item.path}
                   className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                     location.pathname === item.path
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900'
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'text-surface-600 hover:bg-surface-100 hover:text-surface-800'
                   }`}
                 >
                   <span className="mr-1.5">{item.icon}</span>
@@ -64,9 +64,9 @@ const MainLayout: React.FC = () => {
             
             {/* Right side */}
             <div className="flex items-center gap-2">
-              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-success-50 rounded-full">
-                <span className="w-1.5 h-1.5 rounded-full bg-success-500 animate-pulse" />
-                <span className="text-[11px] font-medium text-success-700">就绪</span>
+              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-green-100 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[11px] font-medium text-green-700">就绪</span>
               </div>
             </div>
           </div>
@@ -76,15 +76,15 @@ const MainLayout: React.FC = () => {
       {/* Mobile Sidebar */}
       {isSidebarOpen && (
         <div className="lg:hidden fixed inset-0 z-40">
-          <div className="fixed inset-0 bg-surface-900/50" onClick={toggleSidebar} />
+          <div className="fixed inset-0 bg-black/50" onClick={toggleSidebar} />
           <div className="fixed left-0 top-0 bottom-0 w-64 bg-white shadow-xl">
-            <div className="p-4 border-b border-surface-100">
+            <div className="p-4 border-b border-surface-200">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
                   <span className="text-white font-bold text-sm">F</span>
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold text-surface-900">
+                  <h1 className="text-lg font-bold text-surface-800">
                     Func<span className="text-primary-600">Viz</span>
                   </h1>
                 </div>
@@ -98,8 +98,8 @@ const MainLayout: React.FC = () => {
                   onClick={toggleSidebar}
                   className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                     location.pathname === item.path
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900'
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'text-surface-600 hover:bg-surface-100 hover:text-surface-800'
                   }`}
                 >
                   <span className="text-lg">{item.icon}</span>
@@ -117,14 +117,14 @@ const MainLayout: React.FC = () => {
       </main>
       
       {/* Footer */}
-      <footer className="border-t border-surface-100 bg-white mt-6">
+      <footer className="border-t border-surface-200 bg-white mt-6">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-1 text-[11px] text-surface-400">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-1 text-xs text-surface-500">
             <p>© 2026 FuncViz</p>
             <div className="flex items-center gap-3">
               <span>React + TypeScript + Zustand</span>
-              <span className="text-surface-200">•</span>
-              <span>v2.0.0</span>
+              <span className="text-surface-300">•</span>
+              <span>v2.1.0</span>
             </div>
           </div>
         </div>
