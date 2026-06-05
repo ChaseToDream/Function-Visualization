@@ -2,14 +2,13 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import Notification from './components/Notification';
+import ErrorBoundary from './components/ErrorBoundary';
 
-// Lazy load pages for code splitting
 const VisualizationPage = lazy(() => import('./pages/VisualizationPage'));
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 
-// Loading fallback
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[60vh]">
     <div className="flex flex-col items-center gap-3">
@@ -25,42 +24,52 @@ const LoadingFallback = () => (
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route
-            index
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <VisualizationPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="gallery"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <GalleryPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="settings"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <SettingsPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="about"
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <AboutPage />
-              </Suspense>
-            }
-          />
-        </Route>
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route
+              index
+              element={
+                <Suspense fallback={<LoadingFallback />}>
+                  <ErrorBoundary>
+                    <VisualizationPage />
+                  </ErrorBoundary>
+                </Suspense>
+              }
+            />
+            <Route
+              path="gallery"
+              element={
+                <Suspense fallback={<LoadingFallback />}>
+                  <ErrorBoundary>
+                    <GalleryPage />
+                  </ErrorBoundary>
+                </Suspense>
+              }
+            />
+            <Route
+              path="settings"
+              element={
+                <Suspense fallback={<LoadingFallback />}>
+                  <ErrorBoundary>
+                    <SettingsPage />
+                  </ErrorBoundary>
+                </Suspense>
+              }
+            />
+            <Route
+              path="about"
+              element={
+                <Suspense fallback={<LoadingFallback />}>
+                  <ErrorBoundary>
+                    <AboutPage />
+                  </ErrorBoundary>
+                </Suspense>
+              }
+            />
+          </Route>
+        </Routes>
+      </ErrorBoundary>
       <Notification />
     </BrowserRouter>
   );

@@ -1,27 +1,6 @@
 import { create } from 'zustand';
 
-interface UIStore {
-  // Sidebar
-  isSidebarOpen: boolean;
-  toggleSidebar: () => void;
-  
-  // Theme
-  theme: 'light' | 'system';
-  setTheme: (theme: 'light' | 'system') => void;
-  
-  // Notifications
-  notifications: Notification[];
-  addNotification: (notification: Omit<Notification, 'id'>) => void;
-  removeNotification: (id: string) => void;
-  clearNotifications: () => void;
-  
-  // Modal
-  activeModal: string | null;
-  openModal: (modalId: string) => void;
-  closeModal: () => void;
-}
-
-interface Notification {
+export interface Notification {
   id: string;
   type: 'success' | 'error' | 'info' | 'warning';
   title: string;
@@ -29,24 +8,31 @@ interface Notification {
   duration?: number;
 }
 
+interface UIStore {
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+  
+  notifications: Notification[];
+  addNotification: (notification: Omit<Notification, 'id'>) => void;
+  removeNotification: (id: string) => void;
+  clearNotifications: () => void;
+  
+  activeModal: string | null;
+  openModal: (modalId: string) => void;
+  closeModal: () => void;
+}
+
 export const useUIStore = create<UIStore>()((set) => ({
-  // Sidebar
   isSidebarOpen: true,
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   
-  // Theme
-  theme: 'system',
-  setTheme: (theme) => set({ theme }),
-  
-  // Notifications
   notifications: [],
   addNotification: (notification) => {
-    const id = Date.now().toString();
+    const id = `${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
     set((state) => ({
       notifications: [...state.notifications, { ...notification, id }],
     }));
     
-    // Auto remove after duration
     if (notification.duration !== 0) {
       setTimeout(() => {
         set((state) => ({
@@ -61,8 +47,18 @@ export const useUIStore = create<UIStore>()((set) => ({
     })),
   clearNotifications: () => set({ notifications: [] }),
   
-  // Modal
   activeModal: null,
   openModal: (modalId) => set({ activeModal: modalId }),
   closeModal: () => set({ activeModal: null }),
 }));
+
+// 细粒度选择器 hooks
+export const useNotifications = () => useUIStore((s) => s.notifications);
+export const useIsSidebarOpen = () => useUIStore((s) => s.isSidebarOpen);
+
+// 便捷 hook
+export const useNotification = () => {
+  const addNotification = useUIStore((s) => s.addNotification);
+  const removeNotification = useUIStore((s) => s.removeNotification);
+  return { addNotification, removeNotification };
+};

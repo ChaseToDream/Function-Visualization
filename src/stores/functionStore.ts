@@ -10,63 +10,47 @@ interface HistoryState<T> {
 }
 
 interface FunctionStore {
-  // Functions state
   functions: FunctionItem[];
   history: HistoryState<FunctionItem[]>;
-  
-  // Coordinate state
   coordinateRange: CoordinateRange;
-  
-  // UI state
   isLoading: boolean;
   showShortcutsHelp: boolean;
   
-  // Actions - Functions
   addFunction: (expression: string) => void;
   removeFunction: (id: string) => void;
   clearAllFunctions: () => void;
   
-  // Actions - History
   undo: () => void;
   redo: () => void;
   canUndo: () => boolean;
   canRedo: () => boolean;
   
-  // Actions - Coordinate
   updateCoordinateRange: (range: Partial<CoordinateRange>) => void;
   resetCoordinateRange: () => void;
   
-  // Actions - UI
   setIsLoading: (loading: boolean) => void;
   setShowShortcutsHelp: (show: boolean) => void;
   
-  // Actions - Export
   exportAsJSON: () => string;
   exportAsCSV: () => string;
 }
 
-const MAX_HISTORY = 50;
+const MAX_HISTORY = 30;
 
 export const useFunctionStore = create<FunctionStore>()(
   persist(
     (set, get) => ({
-      // Initial state
       functions: [],
-      history: {
-        past: [],
-        present: [],
-        future: [],
-      },
+      history: { past: [], present: [], future: [] },
       coordinateRange: DEFAULT_COORDINATE_RANGE,
       isLoading: false,
       showShortcutsHelp: false,
       
-      // Function actions
       addFunction: (expression: string) => {
         const { functions, history } = get();
         const color = FUNCTION_COLORS[functions.length % FUNCTION_COLORS.length];
         const newFunction: FunctionItem = {
-          id: Date.now().toString(),
+          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           expression,
           color,
         };
@@ -109,7 +93,6 @@ export const useFunctionStore = create<FunctionStore>()(
         });
       },
       
-      // History actions
       undo: () => {
         const { history } = get();
         if (history.past.length === 0) return;
@@ -144,15 +127,9 @@ export const useFunctionStore = create<FunctionStore>()(
         });
       },
       
-      canUndo: () => {
-        return get().history.past.length > 0;
-      },
+      canUndo: () => get().history.past.length > 0,
+      canRedo: () => get().history.future.length > 0,
       
-      canRedo: () => {
-        return get().history.future.length > 0;
-      },
-      
-      // Coordinate actions
       updateCoordinateRange: (range: Partial<CoordinateRange>) => {
         set((state) => ({
           coordinateRange: { ...state.coordinateRange, ...range },
@@ -163,40 +140,29 @@ export const useFunctionStore = create<FunctionStore>()(
         set({ coordinateRange: DEFAULT_COORDINATE_RANGE });
       },
       
-      // UI actions
-      setIsLoading: (loading: boolean) => {
-        set({ isLoading: loading });
-      },
+      setIsLoading: (loading: boolean) => set({ isLoading: loading }),
+      setShowShortcutsHelp: (show: boolean) => set({ showShortcutsHelp: show }),
       
-      setShowShortcutsHelp: (show: boolean) => {
-        set({ showShortcutsHelp: show });
-      },
-      
-      // Export actions
       exportAsJSON: () => {
         const { functions, coordinateRange } = get();
-        const data = {
-          version: '2.0',
+        return JSON.stringify({
+          version: '2.1',
           timestamp: new Date().toISOString(),
-          functions: functions.map((f) => ({
-            expression: f.expression,
-            color: f.color,
-          })),
+          functions: functions.map(({ expression, color }) => ({ expression, color })),
           coordinateRange,
-        };
-        return JSON.stringify(data, null, 2);
+        }, null, 2);
       },
       
       exportAsCSV: () => {
         const { functions } = get();
-        const headers = ['Expression', 'Color'];
-        const rows = functions.map((f) => [f.expression, f.color]);
-        const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-        return csv;
+        return [
+          'Expression,Color',
+          ...functions.map((f) => `${f.expression},${f.color}`),
+        ].join('\n');
       },
     }),
     {
-      name: 'function-visualization-storage',
+      name: 'funcviz-data',
       partialize: (state) => ({
         functions: state.functions,
         coordinateRange: state.coordinateRange,
@@ -204,3 +170,9 @@ export const useFunctionStore = create<FunctionStore>()(
     }
   )
 );
+
+// 细粒度选择器 hooks
+export const useFunctions = () => useFunctionStore((s) => s.functions);
+export const useCoordinateRange = () => useFunctionStore((s) => s.coordinateRange);
+export const useIsLoading = () => useFunctionStore((s) => s.isLoading);
+export const useShowShortcutsHelp = () => useFunctionStore((s) => s.showShortcutsHelp);
